@@ -1,0 +1,154 @@
+<html>
+<head>
+	<style>
+		html, body{
+			margin:0px;
+			padding:0px;
+			overflow:hidden;
+			background:#eee;
+		}
+		
+		#container{
+			max-width:800px;
+			width:100%;
+			height:100%;
+			background:#e6e6e6;
+			margin:auto;
+			position:relative;
+		}
+		
+		.fp-container {
+		  position: relative;
+		  margin: 10px auto;
+		  width: 450px;
+		  height: 281px;
+		  z-index: 1;
+		  perspective: 1000;
+		}
+		.fp-card {
+		  width: 100%;
+		  height: 100%;
+		  transform-style: preserve-3d;
+		  transition: all 0.4s linear;
+		}
+		.fp-container.fp-active .fp-card {
+		  transform: rotateY(180deg);
+		}
+		.fp-container .fp-card .fp {
+		  position: absolute;
+		  width: 100%;
+		  height: 100%;
+		  backface-visibility: hidden;
+		  top:0px;
+		}
+		.fp-container .fp-card .fp.fp-back {
+		  display: block;
+		  transform: rotateY(180deg);
+		  box-sizing: border-box;
+		  padding: 10px;
+		  color: #000;
+		  z-index:3;
+		}
+		
+		.cards{
+			position:absolute;
+			background:#e6e6e6;
+			border:1px solid #000;
+			margin:-1px;
+		}
+		
+		.fp-front{
+			background:red;
+		}
+		.fp-back{
+			background:green;
+		}
+	</style>
+	
+	<script src="js/jquery.js"></script>
+	<script>
+		var cards;
+		var match;
+		$(function(){
+			match = "";
+			cards = [0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9];
+			var _length = cards.length;
+			var x = 0;
+			for(y = 0; y < _length; y++){
+				
+				var _rand = Math.floor((Math.random()*cards.length));
+				
+				var _div = $("<div>");
+				var _card = $("<div>");
+				var _front = $("<div>");
+				var _back = $("<div>");
+				
+				_div.addClass("cards");
+				_div.addClass("fp-container");
+				_div.attr("data-id",cards[_rand]);
+				
+				_div.css({
+					width: parseInt($("#container").width())/4,
+					height: parseInt($("#container").height())/5,
+					top: (Math.floor(parseInt(y)/4))*(parseInt($("#container").height())/5),
+					left:(x)*(parseInt($("#container").width())/4)
+				});
+				
+				_card.addClass("fp-card");
+				_front.addClass("fp-front");
+				_front.addClass("fp");
+				_back.addClass("fp-back");
+				_back.addClass("fp");
+				
+				_back.html(cards[_rand]);
+				
+				_card.append(_front);
+				_card.append(_back);
+				
+				_div.html(_card);
+				
+				cards.splice( $.inArray(cards[_rand], cards), 1 );
+				
+				x++;
+				if(x > 3)
+					x=0;
+					
+				$("#container").append(_div);
+			}
+		});
+		
+		$(document).on("click",".fp-container",function(){
+			if($(".fp-container.fp-active").length>=2){
+				$(".fp-container").removeClass("fp-active");
+				match = "";
+			}
+			
+			$(this).addClass("fp-active");
+			
+			if(match == $(this).data("id")){
+				$.each($(".fp-container"),function(){
+					if($(this).data("id") == match){
+						var __this = $(this);
+						setTimeout(function(){
+							__this.fadeOut("slow",function(){
+								__this.empty();
+							});
+						}, 500);
+					}
+				});
+			}
+			else{
+				match = $(this).data("id");
+			}
+			
+			
+		});
+	</script>
+</head>
+
+<body>
+	<div id="container">
+		
+	</div>
+</body>
+</html>
